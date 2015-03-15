@@ -1,0 +1,3 @@
+OpenNLP doesn't naturally treat end-of-lines as sentence boundaries
+
+OpenNLP is poorly documented.
