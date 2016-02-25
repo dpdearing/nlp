@@ -376,11 +376,6 @@ public class OpenNlpToolkit {
       if (_linker == null) {
          String corefDir = getProperty(COREF_DIR);
          try {
-//            if (corefDir == null) {
-//               corefDir = "the linker directory";
-//               throw new Exception("No key/value pair found for the linker in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.coref.dir=...'");
-//            }
-
             // linker
             logger.info("Loading the linker from: " + corefDir);
             _linker = new DefaultLinker(
