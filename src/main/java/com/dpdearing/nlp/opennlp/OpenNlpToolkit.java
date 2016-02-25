@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import opennlp.tools.cmdline.parser.ParserTool;
 import opennlp.tools.coref.DefaultLinker;
 import opennlp.tools.coref.DiscourseEntity;
 import opennlp.tools.coref.Linker;
@@ -96,7 +95,7 @@ public class OpenNlpToolkit {
     *            If an error occurs while loading the file
     */
    public String[] detectSentences(final File file, final Charset cs)
-         throws IOException {
+     throws Exception {
       // reading individual lines instead of raw content because with news stories,
       // some sentence lines don't end in punctuation (especially headings, etc.)
       final List<String> lines = FileUtilities.loadLines(file, cs);
@@ -128,7 +127,7 @@ public class OpenNlpToolkit {
     * @param content the content to break into sentences
     * @return the detected sentences
     */
-   public String[] detectSentences(final String content) {
+   public String[] detectSentences(final String content) throws Exception {
       if (_sentenceDetector == null) {
          // lazy initialize
          InputStream modelIn = null;
@@ -142,9 +141,9 @@ public class OpenNlpToolkit {
             _sentenceDetector = new SentenceDetectorME(sentenceModel);
             logger.info("done.");
          } catch (NullPointerException npe) { // happens when modelFilename is null
-            logger.error("No key/value pair found for the Sentence detection model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.sentence=...'");
+            throw new Exception("No key/value pair found for the Sentence detection model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.sentence=...'");
          } catch (final Exception e) {
-            logger.error("Error loading sentence detector, does: " + modelFilename + " exist in your 'resources' directory?", e);
+            throw new IOException("Error loading sentence detector, does: " + modelFilename + " exist in your 'resources' directory?");
          } finally {
             if (modelIn != null) {
                try {
@@ -168,7 +167,7 @@ public class OpenNlpToolkit {
     *           a sentence to tokenize
     * @return the individual tokens
     */
-   public String[] tokenize(final String sentence) {
+   public String[] tokenize(final String sentence) throws Exception {
       // tokenize
       return tokenizer().tokenize(sentence);
    }
@@ -176,7 +175,7 @@ public class OpenNlpToolkit {
    /**
     * @return the lazily-initialized tokenizer
     */
-   private Tokenizer tokenizer() {
+   private Tokenizer tokenizer() throws Exception {
       if (_tokenizer == null) {
          // lazy initialize
          InputStream modelIn = null;
@@ -190,9 +189,9 @@ public class OpenNlpToolkit {
             _tokenizer = new TokenizerME(tokenModel);
             logger.info("done.");
          } catch (NullPointerException npe) { // happens when modelFilename == null
-            logger.error("No key/value pair found for the tokenizer model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.tokenizer=...'");
+            throw new Exception("No key/value pair found for the tokenizer model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.tokenizer=...'");
          } catch (final Exception e) {
-            logger.error("Error loading tokenizer, does: " + modelFilename + " exist in your 'resources' directory?", e);
+            throw new IOException("Error loading tokenizer, does: " + modelFilename + " exist in your 'resources' directory?");
          } finally {
             if (modelIn != null) {
                try {
@@ -214,7 +213,7 @@ public class OpenNlpToolkit {
     *           an array of sentence tokens to tag
     * @return the individual part-of-speech tags
     */
-   public String[] tagPartOfSpeech(final String[] tokens) {
+   public String[] tagPartOfSpeech(final String[] tokens) throws Exception {
       if (_posTagger == null) {
          // lazy initialize
          InputStream modelIn = null;
@@ -228,9 +227,9 @@ public class OpenNlpToolkit {
             _posTagger = new POSTaggerME(posModel);
             logger.info("done.");
          } catch (NullPointerException npe) { // happens when modelFilename == null
-            logger.error("No key/value pair found for the tag part of speech model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.pos=...'");
+            throw new Exception("No key/value pair found for the tag part of speech model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.pos=...'");
          } catch (final Exception e) {
-            logger.error("Error loading part-of-speech tagger, does: " + modelFilename + " exist in your 'resources' directory?", e);
+            throw new IOException("Error loading part-of-speech tagger, does: " + modelFilename + " exist in your 'resources' directory?");
          } finally {
             if (modelIn != null) {
                try {
@@ -257,7 +256,7 @@ public class OpenNlpToolkit {
     *           the sentence tokens
     * @return a collection of named entity references
     */
-   public List<Span> findNamedEntities(final String sentence, final String[] tokens) {
+   public List<Span> findNamedEntities(final String sentence, final String[] tokens) throws Exception {
       final List<Span> entities = new LinkedList<Span>();
       
       // use each type of finder to identify named entities 
@@ -271,7 +270,7 @@ public class OpenNlpToolkit {
    /**
     * Must be called between documents or can negatively impact detection rate.
     */
-   public void clearNamedEntityAdaptiveData() {
+   public void clearNamedEntityAdaptiveData() throws Exception {
       for (final TokenNameFinder finder : nameFinders()) {
          finder.clearAdaptiveData();
       }
@@ -280,7 +279,7 @@ public class OpenNlpToolkit {
    /**
     * @return the lazily-initialized token name finders
     */
-   private TokenNameFinder[] nameFinders() {
+   private TokenNameFinder[] nameFinders() throws Exception {
       final TokenNameFinder[] finders = new TokenNameFinder[NAME_TYPES.length];
       // one for each name type
       for (int i = 0; i < NAME_TYPES.length; i++) {
@@ -293,7 +292,7 @@ public class OpenNlpToolkit {
     * @param type the name type recognizer to load
     * @return the lazily-initialized name token finder
     */
-   private TokenNameFinder nameFinder(final String type) {
+   private TokenNameFinder nameFinder(final String type) throws Exception {
       if (!_nameFinderMap.containsKey(type)) {
          final TokenNameFinder finder = createNameFinder(type);
          _nameFinderMap.put(type, finder);
@@ -305,7 +304,7 @@ public class OpenNlpToolkit {
     * @param type the name type recognizer to load
     * @return the lazily-initialized name token finder
     */
-   private TokenNameFinder createNameFinder(final String type) {
+   private TokenNameFinder createNameFinder(final String type) throws Exception {
       InputStream modelIn = null;
       String modelFilename = getProperty("opennlp.namefinder.format");
       try {
@@ -315,9 +314,9 @@ public class OpenNlpToolkit {
          modelIn.close();
          return new NameFinderME(nameFinderModel);
       } catch (NullPointerException npe) { // happens when modelFilename == null
-         logger.error("No key/value pair found for the " + type + " named entity model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.namefinder.formats=...'");
+         throw new Exception("No key/value pair found for the " + type + " named entity model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.namefinder.format=...'");
       } catch (final Exception e) {
-         logger.error("Error loading " + type + " token name finder, does: " + String.format(modelFilename, type) + " exist in your 'resources' directory?", e);
+         throw new IOException("Error loading " + type + " token name finder, does: " + String.format(modelFilename, type) + " exist in your 'resources' directory?");
       } finally {
          if (modelIn != null) {
             try {
@@ -325,7 +324,6 @@ public class OpenNlpToolkit {
             } catch (final IOException e) {}
          }
       }
-      return null;
    }
 
    /**
@@ -334,7 +332,7 @@ public class OpenNlpToolkit {
     * @param sentences the document sentences
     * @return the recognized discourse entities.
     */
-   public DiscourseEntity[] findEntityMentions(final String[] sentences) {
+   public DiscourseEntity[] findEntityMentions(final String[] sentences) throws Exception {
       
       // list of document mentions
       final List<Mention> document = new ArrayList<Mention>();
@@ -364,7 +362,7 @@ public class OpenNlpToolkit {
          try {
             return linker().getEntities(document.toArray(new Mention[0]));
          } catch (NullPointerException npe) {
-            logger.error("This exception is usually thrown when you don't define '-DWNSEARCHDIR=...' in your VM args, or when a wordnet dictionary file is missing, from that directory", npe);
+            throw new Exception("This exception is usually thrown when you don't define '-DWNSEARCHDIR=...' in your VM args, or when a wordnet dictionary file is missing, from that directory", npe);
          }
       }
 
@@ -374,24 +372,25 @@ public class OpenNlpToolkit {
    /**
     * @return the lazily-initialized linker
     */
-   private Linker linker() {
+   private Linker linker() throws Exception {
       if (_linker == null) {
          String corefDir = getProperty(COREF_DIR);
          try {
-            if (corefDir == null) {
-               corefDir = "the linker directory";
-               throw new Exception("No key/value pair found for the linker in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.coref.dir=...'");
-            }
+//            if (corefDir == null) {
+//               corefDir = "the linker directory";
+//               throw new Exception("No key/value pair found for the linker in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.coref.dir=...'");
+//            }
 
             // linker
             logger.info("Loading the linker from: " + corefDir);
             _linker = new DefaultLinker(
-                  // LinkerMode should be TEST
-                  //Note: I tried EVAL for a long time before realizing that was the problem
-                  corefDir, LinkerMode.TEST);
-            
+              // LinkerMode should be TEST
+              //Note: I tried EVAL for a long time before realizing that was the problem
+              corefDir, LinkerMode.TEST);
+         } catch (NullPointerException npe) {
+            throw new Exception("No key/value pair found for the linker in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.coref.dir=...'");
          } catch (final Exception e) {
-            logger.error("Error loading linker from: " + corefDir + " do the coref data files exist in that directory?", e);
+            throw new IOException("Error loading linker from: " + corefDir + " do the coref data files exist in that directory?");
          }
       }
 
@@ -404,7 +403,7 @@ public class OpenNlpToolkit {
     * @param text the sentence text
     * @return the parse tree
     */
-   public Parse parseSentence(final String text) {
+   public Parse parseSentence(final String text) throws Exception {
       
       final Parse p = new Parse(text,
             // a new span covering the entire text
@@ -439,11 +438,11 @@ public class OpenNlpToolkit {
     * @param p the parse object
     * @return the parsed parse
     */
-   private Parse parse(final Parse p) {
+   private Parse parse(final Parse p) throws Exception {
       return parser().parse(p);
    }
    
-   private Parser parser() {
+   private Parser parser() throws Exception {
       if (_parser == null) {
          // lazily initialize the parser
          InputStream modelIn = null;
@@ -456,9 +455,9 @@ public class OpenNlpToolkit {
             modelIn.close();
             _parser = ParserFactory.create(parseModel);
          } catch(NullPointerException npe) { // happens when modelFilename == null
-            logger.error("No key/value pair found for the parser model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.parser=...'");
+            throw new Exception("No key/value pair found for the parser model in the 'opennlp.properties' file, the missing key/value pair is 'opennlp.parser=...'");
          } catch (final Exception e) {
-            logger.error("Error loading parser, does: " + modelFilename + " exist in your 'resources' directory?", e);
+            throw new IOException("Error loading parser, does: " + modelFilename + " exist in your 'resources' directory?");
          } finally {
             if (modelIn != null) {
                try {
@@ -467,7 +466,7 @@ public class OpenNlpToolkit {
             }
          }
       }
-      // return the parser
+
       return _parser;
    }   
    
@@ -478,7 +477,7 @@ public class OpenNlpToolkit {
     *           property of interest
     * @return value of the specified property
     */
-   private String getProperty(final String property) {
+   private String getProperty(final String property) throws Exception {
       if (_properties == null) {
          _properties = new Properties();
 
@@ -487,9 +486,8 @@ public class OpenNlpToolkit {
             input = getClass().getResourceAsStream(PROPERTIES_FILENAME);
             _properties.load(input);
          }
-         catch (final IOException ioe) {
-            logger.error("Error reading properties file", ioe);
-            System.exit(1);
+         catch (final Exception ioe) { // includes also NPE not only IOException
+            throw new Exception("Error reading properties file: " + PROPERTIES_FILENAME);
          }
          finally {
             if (input != null) {
