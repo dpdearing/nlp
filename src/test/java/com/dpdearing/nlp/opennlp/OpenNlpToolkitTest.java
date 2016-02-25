@@ -3,7 +3,6 @@ package com.dpdearing.nlp.opennlp;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +23,7 @@ public class OpenNlpToolkitTest {
     * Test method for both sentence detection and tokenization
     */
    @Test
-   public void testSentenceDetectionAndTokenization() {
+   public void testSentenceDetectionAndTokenization() throws Exception {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
       
       // Example taken from:
@@ -80,7 +79,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#detectSentences(String)}.
     */
    @Test
-   public void testDetectSentences() {
+   public void testDetectSentences() throws Exception {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
       
       // Example taken from:
@@ -121,7 +120,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#detectSentences(File, Charset)}.
     */
    @Test
-   public void testDetectSentencesWithEndOfLineBoundaries() throws IOException {
+   public void testDetectSentencesWithEndOfLineBoundaries() throws Exception {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
       final String[] expected = new String[] {
@@ -149,7 +148,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#tokenize(String)}.
     */
    @Test
-   public void testTokenize() {
+   public void testTokenize() throws Exception {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
       // Example taken (and corrected) from:
@@ -196,7 +195,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#tagPartOfSpeech(String[])}.
     */
    @Test
-   public void testPartOfSpeechTagger() {
+   public void testPartOfSpeechTagger() throws Exception {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
       // Example taken (and corrected) from:
@@ -236,7 +235,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#}.
     */
    @Test
-   public void testParser() {
+   public void testParser() throws Exception {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
       // Example taken (and corrected) from:
@@ -270,7 +269,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#findNamedEntities(String, String[])}.
     */
    @Test
-   public void testFindNamedEntities() {
+   public void testFindNamedEntities() throws Exception {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
       // Example taken (and corrected) from:
@@ -310,7 +309,7 @@ public class OpenNlpToolkitTest {
     * </p>
     */
    @Test
-   public void testFindEntityMentions() {
+   public void testFindEntityMentions() throws Exception {
        final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
        // Example taken (and corrected) from:
