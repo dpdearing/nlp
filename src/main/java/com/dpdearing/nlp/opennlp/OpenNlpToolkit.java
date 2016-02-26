@@ -47,16 +47,9 @@ public class OpenNlpToolkit {
    static private final Logger logger = LoggerFactory.getLogger(OpenNlpToolkit.class);
 
    /**
-    * Open NLP properties
+    * The Open NLP properties file
     */
    static final private String PROPERTIES_FILENAME = "opennlp.properties";
-
-   /**
-    * The Named Entity Types of interest. Each requires a corresponding Open NLP
-    * model file.
-    */
-   private static final String[] NAME_TYPES =
-         { "person", "organization", "location" };
 
    /**
     * Properties containing the Open NLP binary paths
@@ -271,10 +264,15 @@ public class OpenNlpToolkit {
     * @throws IOException if an I/O error occurs while loading a named entity model resource
     */
    private TokenNameFinder[] nameFinders() throws IOException {
-      final TokenNameFinder[] finders = new TokenNameFinder[NAME_TYPES.length];
+      List<String> activeTypes = getPropertyList("opennlp.namefinder.types");
+      if (activeTypes.isEmpty()) {
+         logger.warn("No active name entity types declared for the opennlp.namefinder.types property");
+      }
+
+      final TokenNameFinder[] finders = new TokenNameFinder[activeTypes.size()];
       // one for each name type
-      for (int i = 0; i < NAME_TYPES.length; i++) {
-         finders[i] = nameFinder(NAME_TYPES[i]);
+      for (int i = 0; i < activeTypes.size(); i++) {
+         finders[i] = nameFinder(activeTypes.get(i));
       }
       return finders;
    }
@@ -498,6 +496,25 @@ public class OpenNlpToolkit {
       }
 
       return modelStream;
+   }
+
+   /**
+    * Gets the values of the specified application property as a list.
+    *
+    * @param property
+    *           property of interest
+    * @return List containing the values of the specified property
+    * @throws IllegalArgumentException if no value exists for the property
+    * @throws IOException if the property file does not exist
+    */
+   private List<String> getPropertyList(final String property) throws IOException {
+      String[] values = getProperty(property).split(",");
+      ArrayList<String> list = new ArrayList<String>(values.length);
+      for (String value : values) {
+         String clean = value.trim();
+         if (!clean.isEmpty()) list.add(clean);
+      }
+      return list;
    }
 
    /**
