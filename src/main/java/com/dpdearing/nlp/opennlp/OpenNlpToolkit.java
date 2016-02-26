@@ -165,7 +165,7 @@ public class OpenNlpToolkit {
     * @return the lazily-initialized tokenizer
     * @throws IOException if an I/O error occurs while loading the tokenizer model resource
     */
-   private Tokenizer tokenizer() throws IOException {
+   protected Tokenizer tokenizer() throws IOException {
       if (_tokenizer == null) {
          // lazy initialize
          InputStream modelIn = null;
@@ -263,7 +263,7 @@ public class OpenNlpToolkit {
     * @return the lazily-initialized token name finders
     * @throws IOException if an I/O error occurs while loading a named entity model resource
     */
-   private TokenNameFinder[] nameFinders() throws IOException {
+   protected TokenNameFinder[] nameFinders() throws IOException {
       List<String> activeTypes = getPropertyList("opennlp.namefinder.types");
       if (activeTypes.isEmpty()) {
          logger.warn("No active name entity types declared for the opennlp.namefinder.types property");
@@ -378,7 +378,7 @@ public class OpenNlpToolkit {
     * @return the lazily-initialized linker
     * @throws IOException if an I/O error occurs while initializing the coreference linker
     */
-   private Linker linker() throws IOException {
+   protected Linker linker() throws IOException {
       if (_linker == null) {
          // get the coref directory
          String corefDir = getProperty("opennlp.coref.dir");
@@ -453,7 +453,7 @@ public class OpenNlpToolkit {
     * @return the lazily-initialized parser
     * @throws IOException if an I/O error occurs while loading the parser model resource
     */
-   private Parser parser() throws IOException {
+   protected Parser parser() throws IOException {
       if (_parser == null) {
          // lazily initialize the parser
          InputStream modelIn = null;
