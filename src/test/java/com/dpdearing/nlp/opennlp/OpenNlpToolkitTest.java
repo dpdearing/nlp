@@ -24,7 +24,7 @@ public class OpenNlpToolkitTest {
     * Test method for both sentence detection and tokenization
     */
    @Test
-   public void testSentenceDetectionAndTokenization() {
+   public void testSentenceDetectionAndTokenization() throws IOException {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
       
       // Example taken from:
@@ -80,7 +80,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#detectSentences(String)}.
     */
    @Test
-   public void testDetectSentences() {
+   public void testDetectSentences() throws IOException {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
       
       // Example taken from:
@@ -149,7 +149,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#tokenize(String)}.
     */
    @Test
-   public void testTokenize() {
+   public void testTokenize() throws IOException {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
       // Example taken (and corrected) from:
@@ -196,7 +196,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#tagPartOfSpeech(String[])}.
     */
    @Test
-   public void testPartOfSpeechTagger() {
+   public void testPartOfSpeechTagger() throws IOException {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
       // Example taken (and corrected) from:
@@ -236,7 +236,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#}.
     */
    @Test
-   public void testParser() {
+   public void testParser() throws IOException {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
       // Example taken (and corrected) from:
@@ -270,7 +270,7 @@ public class OpenNlpToolkitTest {
     * Test method for {@link OpenNlpToolkit#findNamedEntities(String, String[])}.
     */
    @Test
-   public void testFindNamedEntities() {
+   public void testFindNamedEntities() throws IOException {
       final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
       // Example taken (and corrected) from:
@@ -310,7 +310,7 @@ public class OpenNlpToolkitTest {
     * </p>
     */
    @Test
-   public void testFindEntityMentions() {
+   public void testFindEntityMentions() throws IOException {
        final OpenNlpToolkit toolkit = new OpenNlpToolkit();
 
        // Example taken (and corrected) from:
