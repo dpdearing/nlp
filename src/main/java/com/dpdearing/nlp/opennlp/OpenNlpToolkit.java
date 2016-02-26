@@ -106,7 +106,7 @@ public class OpenNlpToolkit {
             }
          }
       }
-      return sentences.toArray(new String[0]);
+      return sentences.toArray(new String[sentences.size()]);
    }
 
    /**
@@ -346,14 +346,14 @@ public class OpenNlpToolkit {
          final Mention[] extents = linker().getMentionFinder().getMentions(parseWrapper);
          
          //Note: taken from TreebankParser source...
-         for (int ei=0, en=extents.length; ei<en; ei++) {
+         for (Mention mention : extents) {
             // construct new parses for mentions which don't have constituents.
-            if (extents[ei].getParse() == null) {
+            if (mention.getParse() == null) {
                // not sure how to get head index, but its not used at this point
-               final Parse snp = new Parse(parse.getText(), extents[ei].getSpan(), "NML", 1.0, 0);
+               final Parse snp = new Parse(parse.getText(), mention.getSpan(), "NML", 1.0, 0);
                parse.insert(snp);
-               logger.debug("Setting new parse for " + extents[ei] + " to " + snp);
-               extents[ei].setParse(new DefaultParse(snp, i));
+               logger.debug("Setting new parse for " + mention + " to " + snp);
+               mention.setParse(new DefaultParse(snp, i));
             }
          }
          document.addAll(Arrays.asList(extents));
@@ -362,7 +362,7 @@ public class OpenNlpToolkit {
       if (!document.isEmpty()) {
          try
          {
-            return linker().getEntities(document.toArray(new Mention[0]));
+            return linker().getEntities(document.toArray(new Mention[document.size()]));
          } catch (NullPointerException npe) {
             logger.error("This exception is usually thrown when you don't define '-DWNSEARCHDIR=...' " +
                   "in your VM args, or when a WordNet dictionary file is missing from that location", npe);
