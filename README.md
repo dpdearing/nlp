@@ -8,7 +8,7 @@ So please define the following (when running on your favorite IDE or as MAVEN_OP
 * `-Xmx1024M`
 * `-DWNSEARCHDIR=lib/wordnet/dict`
 
-(for maven) `MAVEN_OPTS="-Xmx1024M -DWNSEARCHDIR=lib/wordnet/dict"` **`mvn test`**
+(for maven) **`MAVEN_OPTS="-Xmx1024M -DWNSEARCHDIR=lib/wordnet/dict" mvn test`**
 
 ## OpenNLP
 
