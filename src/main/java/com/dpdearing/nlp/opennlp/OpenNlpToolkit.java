@@ -533,11 +533,13 @@ public class OpenNlpToolkit {
          InputStream input = null;
          try {
             input = getClass().getResourceAsStream(PROPERTIES_FILENAME);
+            // verify stream was retrieved
+            if (input == null) {
+               throw new IOException(String.format(
+                     "Error loading the %s resource.", PROPERTIES_FILENAME));
+            }
+
             _properties.load(input);
-         }
-         catch (final IOException ioe) {
-            logger.error("Error reading properties file", ioe);
-            throw ioe;
          }
          finally {
             if (input != null) {
