@@ -22,4 +22,4 @@ I am currently using OpenNLP 1.5.x.  [See OpenNLP 1.5 tutorials at http://blog.d
     * **(Windows users)** Rename the WordNet `data.xxx` and `index.xxx` dictionary files:
       * Remove the `data.` prefix and add the `.dat` extension (i.e., `data.noun` becomes `noun.dat`)
       * Remove the `index.` prefix and add the `.idx` extension (i.e., `index.noun` becomes `noun.idx`)
-  * Directory locations are configurable using the `opennlp.properties` file (in the `resources` directory)
+* Resource locations are configurable using the `opennlp.properties` file (in the `src/main/resources/com/dpdearing/nlp/opennlp` directory)
