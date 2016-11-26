@@ -47,14 +47,15 @@ public class OpenNlpToolkit {
    static private final Logger logger = LoggerFactory.getLogger(OpenNlpToolkit.class);
 
    /**
-    * The Open NLP properties file
+    * The Open NLP system property key and default properties resource name
     */
-   static final private String PROPERTIES_FILENAME = "opennlp.properties";
+   static final public  String OPENNLP_SYSTEM_PROPERTY = "opennlp.properties";
+   static final private String DEFAULT_PROPERTIES_RESOURCE = "opennlp-1.5-en.properties";
 
    /**
     * Properties containing the Open NLP binary paths
     */
-   private Properties _properties = null;
+   final private Properties _properties;
    
    /**
     * OpenNLP components, each is lazily initialized.  Don't directly access, but use:
@@ -73,6 +74,14 @@ public class OpenNlpToolkit {
          new HashMap<String, TokenNameFinder>();
    private Parser _parser = null;
    private Linker _linker = null;
+
+   public OpenNlpToolkit() throws IOException {
+      this(System.getProperty(OPENNLP_SYSTEM_PROPERTY, DEFAULT_PROPERTIES_RESOURCE));
+   }
+
+   public OpenNlpToolkit(final String resourceName) throws IOException {
+      _properties = loadProperties(resourceName);
+   }
 
    /**
     * Read the content from the specified file and return a list of detected
@@ -527,39 +536,43 @@ public class OpenNlpToolkit {
     * @throws IOException if the property file does not exist
     */
    private String getProperty(final String property) throws IOException {
-      if (_properties == null) {
-         _properties = new Properties();
-
-         InputStream input = null;
-         try {
-            input = getClass().getResourceAsStream(PROPERTIES_FILENAME);
-            // verify stream was retrieved
-            if (input == null) {
-               throw new IOException(String.format(
-                     "Error loading the %s resource.", PROPERTIES_FILENAME));
-            }
-
-            _properties.load(input);
-         }
-         finally {
-            if (input != null) {
-               try {
-                  input.close();
-               }
-               catch (final IOException ioe) {
-                  logger.warn("Unable to close OpenNLP properties file", ioe);
-               }
-            }
-         }
-      }
-
       String value = _properties.getProperty(property);
       if (value == null) {
          throw new IllegalArgumentException(String.format(
-               "No value for the '%s' model in the %s file",
-               property, PROPERTIES_FILENAME));
+               "No value for the '%s' model in the loaded properties file",
+               property));
       }
 
       return value;
    }
+
+   private Properties loadProperties(final String resourceName) throws IOException {
+      logger.info("Loading OpenNLP properties from the '{}' resource", resourceName);
+      Properties properties = new Properties();
+
+      InputStream input = null;
+      try {
+         input = getClass().getResourceAsStream(resourceName);
+         // verify stream was retrieved
+         if (input == null) {
+            throw new IOException(String.format(
+                    "Error loading the %s resource.", resourceName));
+         }
+
+         properties.load(input);
+      }
+      finally {
+         if (input != null) {
+            try {
+               input.close();
+            }
+            catch (final IOException ioe) {
+               logger.warn("Unable to close OpenNLP properties file", ioe);
+            }
+         }
+      }
+
+      return properties;
+   }
+
 }
